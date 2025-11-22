@@ -7,8 +7,8 @@ export const getSavingsProducts = async (): Promise<SavingsProduct[]> => {
     return response;
   } catch (error) {
     if (isHttpError(error)) {
-      throw new Error(`상품 정보를 불러오는데 실패했습니다: ${error.message}`);
+      throw new Error(`상품 정보를 불러오는데 실패했어요: ${error.message}`);
     }
-    throw new Error('상품 정보를 불러오는데 실패했습니다.');
+    throw new Error('상품 정보를 불러오는데 실패했어요.');
   }
 };
