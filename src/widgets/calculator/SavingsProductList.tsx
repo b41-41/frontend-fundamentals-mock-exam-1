@@ -8,7 +8,7 @@ import { useSavingProductStore } from '@/store/useSavingProductStore';
 
 const SavingsProductListContent = () => {
   const { data: products } = useSavingsProducts();
-  const { selectedProduct, setSelectedProduct } = useSavingProductStore();
+  const { selectedProduct, setSelectedProduct, setCurrentTab } = useSavingProductStore();
 
   if (products.length === 0) {
     return (
@@ -28,7 +28,10 @@ const SavingsProductListContent = () => {
           key={product.id}
           product={product}
           isSelected={selectedProduct?.id === product.id}
-          onClick={() => setSelectedProduct(product)}
+          onClick={() => {
+            setSelectedProduct(product);
+            setCurrentTab('results');
+          }}
         />
       ))}
       <Spacing size={16} />
