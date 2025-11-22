@@ -23,9 +23,8 @@ export const CalculationResult = () => {
     );
   }
 
-  const expectedProfit = calculateExpectedProfit(monthlyPayment, savingsPeriod, selectedProduct.annualRate);
-  const totalAmount = monthlyPayment * savingsPeriod + expectedProfit;
-  const difference = calculateDifferenceFromTarget(targetAmount, totalAmount);
+  const finalAmount = calculateExpectedProfit(monthlyPayment, savingsPeriod, selectedProduct.annualRate);
+  const difference = calculateDifferenceFromTarget(targetAmount, finalAmount);
   const recommendedPayment = calculateRecommendedMonthlyPayment(
     targetAmount,
     savingsPeriod,
@@ -41,7 +40,7 @@ export const CalculationResult = () => {
             type="2RowTypeA"
             top="예상 수익 금액"
             topProps={{ color: colors.grey600 }}
-            bottom={`${formatNumber(expectedProfit)}원`}
+            bottom={`${formatNumber(finalAmount)}원`}
             bottomProps={{ fontWeight: 'bold', color: colors.blue600 }}
           />
         }
