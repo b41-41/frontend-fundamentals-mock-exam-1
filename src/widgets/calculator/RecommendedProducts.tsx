@@ -1,7 +1,6 @@
 import { ErrorBoundary } from 'react-error-boundary';
-import { colors, ListRow, Spacing } from 'tosslib';
+import { colors, ListHeader, ListRow, Spacing } from 'tosslib';
 import { SavingProductErrorFallback } from '@/components/SavingProductErrorFallback';
-import { SavingProductItem } from '@/features/SavingProduct/SavingProductItem';
 import { useSavingsProducts } from '@/hooks/useSavingsProducts';
 import { useSavingProductStore } from '@/store/useSavingProductStore';
 import { calculateRecommendedMonthlyPayment } from './calculations';
@@ -12,7 +11,7 @@ const formatNumber = (value: number): string => {
 
 const RecommendedProductsContent = () => {
   const { data: products, isLoading, error } = useSavingsProducts();
-  const { targetAmount, savingsPeriod, setMonthlyPayment, setSelectedProduct, setCurrentTab } = useSavingProductStore();
+  const { targetAmount, savingsPeriod } = useSavingProductStore();
 
   if (isLoading) {
     return (
@@ -82,46 +81,28 @@ const RecommendedProductsContent = () => {
     );
   }
 
-  const handleProductClick = (product: (typeof recommendedProducts)[0]['product'], recommendedPayment: number) => {
-    setSelectedProduct(product);
-    setMonthlyPayment(recommendedPayment);
-    setCurrentTab('results');
-  };
-
   return (
     <>
-      <Spacing size={16} />
-      <ListRow
-        contents={
-          <ListRow.Texts
-            type="1RowTypeA"
-            top={`목표 금액 달성을 위한 추천 상품 (${recommendedProducts.length}개)`}
-            topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
-          />
-        }
-      />
-      <Spacing size={16} />
-      {recommendedProducts.map(({ product, recommendedPayment }) => (
-        <div key={product.id}>
-          <SavingProductItem
-            product={product}
-            isSelected={false}
-            onClick={() => handleProductClick(product, recommendedPayment)}
-            showCheckIcon={false}
-          />
-          <Spacing size={4} />
-          <ListRow
-            contents={
-              <ListRow.Texts
-                type="1RowTypeA"
-                top={`추천 월 납입액: ${formatNumber(recommendedPayment)}원`}
-                topProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
-              />
-            }
-          />
-          <Spacing size={16} />
-        </div>
+      <ListHeader title={<ListHeader.TitleParagraph fontWeight="bold">추천 상품 목록</ListHeader.TitleParagraph>} />
+      <Spacing size={12} />
+      {recommendedProducts.slice(0, 2).map(({ product }) => (
+        <ListRow
+          key={product.id}
+          contents={
+            <ListRow.Texts
+              type="3RowTypeA"
+              top={product.name}
+              topProps={{ fontSize: 16, fontWeight: 'bold', color: colors.grey900 }}
+              middle={`연 이자율: ${product.annualRate}%`}
+              middleProps={{ fontSize: 14, color: colors.blue600, fontWeight: 'medium' }}
+              bottom={`${formatNumber(product.minMonthlyAmount)}원 ~ ${formatNumber(product.maxMonthlyAmount)}원 | ${product.availableTerms}개월`}
+              bottomProps={{ fontSize: 13, color: colors.grey600 }}
+            />
+          }
+          onClick={() => {}}
+        />
       ))}
+      <Spacing size={40} />
     </>
   );
 };
