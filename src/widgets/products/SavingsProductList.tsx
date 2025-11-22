@@ -5,10 +5,11 @@ import { SavingProductErrorFallback } from '@/components/SavingProductErrorFallb
 import { SavingProductItem } from '@/features/SavingProduct/SavingProductItem';
 import { useSavingsProducts } from '@/hooks/useSavingsProducts';
 import { useSavingProductStore } from '@/store/useSavingProductStore';
+import { filterProductsForRecommendation } from '@/features/SavingProduct/helpers/filters';
 
 const SavingsProductListContent = () => {
   const { data: products } = useSavingsProducts();
-  const { selectedProduct, setSelectedProduct, setCurrentTab } = useSavingProductStore();
+  const { selectedProduct, setSelectedProduct, setCurrentTab, monthlyPayment, savingsPeriod } = useSavingProductStore();
 
   if (products.length === 0) {
     return (
@@ -20,10 +21,22 @@ const SavingsProductListContent = () => {
     );
   }
 
+  const filteredProducts = filterProductsForRecommendation(products, monthlyPayment, savingsPeriod);
+
+  if (filteredProducts.length === 0) {
+    return (
+      <>
+        <Spacing size={16} />
+        <div>조건에 맞는 상품이 없어요. 다른 조건으로 검색해보세요.</div>
+        <Spacing size={16} />
+      </>
+    );
+  }
+
   return (
     <>
       <Spacing size={16} />
-      {products.map(product => (
+      {filteredProducts.map(product => (
         <SavingProductItem
           key={product.id}
           product={product}

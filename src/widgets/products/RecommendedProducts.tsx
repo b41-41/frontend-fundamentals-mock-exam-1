@@ -4,7 +4,7 @@ import { colors, ListHeader, ListRow, Spacing } from 'tosslib';
 import { SavingProductErrorFallback } from '@/components/SavingProductErrorFallback';
 import { useSavingsProducts } from '@/hooks/useSavingsProducts';
 import { useSavingProductStore } from '@/store/useSavingProductStore';
-import { calculateRecommendedMonthlyPayment } from './calculations';
+import { calculateRecommendedMonthlyPayment } from '@/widgets/calculator/calculations';
 
 const formatNumber = (value: number): string => {
   return value.toLocaleString('ko-KR');
@@ -12,16 +12,10 @@ const formatNumber = (value: number): string => {
 
 const RecommendedProductsContent = () => {
   const { data: products } = useSavingsProducts();
-  const { targetAmount, savingsPeriod } = useSavingProductStore();
+  const { targetAmount, savingsPeriod, selectedProduct } = useSavingProductStore();
 
-  if (targetAmount === 0 || savingsPeriod === 0) {
-    return (
-      <>
-        <Spacing size={16} />
-        <ListRow contents={<ListRow.Texts type="1RowTypeA" top="목표 금액과 저축 기간을 입력해주세요." />} />
-        <Spacing size={16} />
-      </>
-    );
+  if (!selectedProduct) {
+    return null;
   }
 
   if (products.length === 0) {
@@ -34,7 +28,6 @@ const RecommendedProductsContent = () => {
     );
   }
 
-  // 추천 월 납입액 계산 및 필터링된 상품 찾기
   const recommendedProducts = products
     .map(product => {
       const recommendedPayment = calculateRecommendedMonthlyPayment(targetAmount, savingsPeriod, product.annualRate);
@@ -43,13 +36,7 @@ const RecommendedProductsContent = () => {
         recommendedPayment,
       };
     })
-    .filter(
-      ({ product, recommendedPayment }) =>
-        recommendedPayment >= product.minMonthlyAmount &&
-        recommendedPayment <= product.maxMonthlyAmount &&
-        product.availableTerms === savingsPeriod
-    )
-    .sort((a, b) => b.product.annualRate - a.product.annualRate); // 이자율 높은 순 정렬
+    .sort((a, b) => b.product.annualRate - a.product.annualRate);
 
   if (recommendedProducts.length === 0) {
     return (

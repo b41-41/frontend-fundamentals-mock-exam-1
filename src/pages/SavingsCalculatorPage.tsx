@@ -1,10 +1,10 @@
 import { Border, NavigationBar, Spacing } from 'tosslib';
 import { useSavingProductStore } from '@/store/useSavingProductStore';
 import { CalculationResult } from '@/widgets/calculator/CalculationResult';
-import { RecommendedProducts } from '@/widgets/calculator/RecommendedProducts';
 import { SavingsCalculatorForm } from '@/widgets/calculator/SavingsCalculatorForm';
 import { SavingsCalculatorTabs } from '@/widgets/calculator/SavingsCalculatorTabs';
-import { SavingsProductList } from '@/widgets/calculator/SavingsProductList';
+import { SavingsProductList } from '@/widgets/products/SavingsProductList';
+import { RecommendedProducts } from '@/widgets/products/RecommendedProducts';
 
 export function SavingsCalculatorPage() {
   const { currentTab } = useSavingProductStore();
