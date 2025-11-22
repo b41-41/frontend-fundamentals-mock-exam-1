@@ -5,6 +5,7 @@ import { SavingProductErrorFallback } from '@/components/SavingProductErrorFallb
 import { useSavingsProducts } from '@/hooks/useSavingsProducts';
 import { useSavingProductStore } from '@/store/useSavingProductStore';
 import { calculateRecommendedMonthlyPayment } from '@/widgets/calculator/calculations';
+import { filterProductsForRecommendation } from '@/features/SavingProduct/helpers/filters';
 
 const formatNumber = (value: number): string => {
   return value.toLocaleString('ko-KR');
@@ -12,7 +13,7 @@ const formatNumber = (value: number): string => {
 
 const RecommendedProductsContent = () => {
   const { data: products } = useSavingsProducts();
-  const { targetAmount, savingsPeriod, selectedProduct } = useSavingProductStore();
+  const { targetAmount, savingsPeriod, selectedProduct, monthlyPayment } = useSavingProductStore();
 
   if (!selectedProduct) {
     return null;
@@ -28,7 +29,9 @@ const RecommendedProductsContent = () => {
     );
   }
 
-  const recommendedProducts = products
+  const filteredProducts = filterProductsForRecommendation(products, monthlyPayment, savingsPeriod);
+
+  const recommendedProducts = filteredProducts
     .map(product => {
       const recommendedPayment = calculateRecommendedMonthlyPayment(targetAmount, savingsPeriod, product.annualRate);
       return {
