@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { colors, ListHeader, ListRow, Spacing } from 'tosslib';
 import { SavingProductErrorFallback } from '@/components/SavingProductErrorFallback';
@@ -10,22 +11,8 @@ const formatNumber = (value: number): string => {
 };
 
 const RecommendedProductsContent = () => {
-  const { data: products, isLoading, error } = useSavingsProducts();
+  const { data: products } = useSavingsProducts();
   const { targetAmount, savingsPeriod } = useSavingProductStore();
-
-  if (isLoading) {
-    return (
-      <>
-        <Spacing size={16} />
-        <div>추천 상품을 찾고 있어요...</div>
-        <Spacing size={16} />
-      </>
-    );
-  }
-
-  if (error) {
-    throw error;
-  }
 
   if (targetAmount === 0 || savingsPeriod === 0) {
     return (
@@ -37,7 +24,7 @@ const RecommendedProductsContent = () => {
     );
   }
 
-  if (!products || products.length === 0) {
+  if (products.length === 0) {
     return (
       <>
         <Spacing size={16} />
@@ -110,7 +97,17 @@ const RecommendedProductsContent = () => {
 export const RecommendedProducts = () => {
   return (
     <ErrorBoundary FallbackComponent={SavingProductErrorFallback}>
-      <RecommendedProductsContent />
+      <Suspense
+        fallback={
+          <>
+            <Spacing size={16} />
+            <div>추천 상품을 찾고 있어요...</div>
+            <Spacing size={16} />
+          </>
+        }
+      >
+        <RecommendedProductsContent />
+      </Suspense>
     </ErrorBoundary>
   );
 };
